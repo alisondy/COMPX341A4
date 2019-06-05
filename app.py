@@ -54,8 +54,13 @@ def check_prime(num):
 
 # Credit : https://stackoverflow.com/questions/35188540/get-a-variable-from-the-url-in-a-flask-route
 @app.route('/isPrime/<string:number>')
-def thing(number):
+def is_prime_number(number):
     return check_prime(number)
+
+
+@app.route('/primesStored')
+def get_primes_stored():
+    return cache.get('primes')
 
 
 @app.route('/')
