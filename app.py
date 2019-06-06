@@ -60,7 +60,10 @@ def is_prime_number(number):
 
 @app.route('/primesStored')
 def get_primes_stored():
-    return cache.get('primes')
+    if cache.get('primes') is not None:
+        return cache.get('primes')
+    else:
+        return 'No primes currently stored!'
 
 
 @app.route('/')
