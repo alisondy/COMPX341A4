@@ -1,10 +1,10 @@
 import time
 from itertools import count, islice
 from math import sqrt
-
+from threading import Lock, Thread
 import redis
 from flask import Flask
-
+lock = Lock()
 app = Flask(__name__)
 cache = redis.Redis(host='redis', port=6379)
 
@@ -40,15 +40,21 @@ def check_prime(num):
         return '{} is not a number'.format(num)
     if cache.get('primes') is not None:
         x = [int(i) for i in cache.get('primes').split()]
-        if num_p in x:
+        if num_p in set(x):
             return '{} is a prime number'.format(num_p)
     if is_prime(num_p):
+        lock.acquire()
         if cache.get('primes') is not None:
+            x = [int(i) for i in cache.get('primes').split()]
+            if num_p in set(x):
+                return '{} is a prime number'.format(num_p)
             cache.append('primes', ' {}'.format(num_p))
         else:
             cache.append('primes', '{}'.format(num_p))
+        lock.release()
         return '{} is a prime number'.format(num_p)
     else:
+        lock.release()
         return '{} is not a prime number'.format(num_p)
 
 
