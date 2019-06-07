@@ -47,6 +47,7 @@ def check_prime(num):
         if cache.get('primes') is not None:
             x = [int(i) for i in cache.get('primes').split()]
             if num_p in set(x):
+                lock.release()
                 return '{} is a prime number'.format(num_p)
             cache.append('primes', ' {}'.format(num_p))
         else:
@@ -54,7 +55,6 @@ def check_prime(num):
         lock.release()
         return '{} is a prime number'.format(num_p)
     else:
-        lock.release()
         return '{} is not a prime number'.format(num_p)
 
 
